@@ -52,6 +52,15 @@ function daysAgoStr(months) {
   d.setMonth(d.getMonth() - months);
   return d.toISOString().slice(0, 10);
 }
+// Kokotoa tarehe ambayo kodi mpya inatakiwa kuanza:
+// tarehe ya malipo + idadi ya miezi aliyolipia + siku 1
+// mfano: 2025-01-03 + miezi 3 = 2025-04-03, + siku 1 = 2025-04-04
+function computeExpectedDueDate(paymentDateStr, months) {
+  const d = new Date(paymentDateStr + "T00:00:00");
+  d.setMonth(d.getMonth() + months);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
 
 /* ---------------- AUTH (Anonymous + Username/Password lookup, kama Ustawi) ---------------- */
 let currentUsername = null;
@@ -99,7 +108,7 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 function applySession(session) {
   currentUsername = session.username;
   currentRole = session.role;
-  currentUserName = session.name;
+  currentUserName = session.name || session.username || "Mtumiaji";
 
   document.getElementById("loginScreen").classList.add("hidden");
   document.getElementById("appShell").classList.remove("hidden");
@@ -270,7 +279,7 @@ function listenSales() {
         tbody.innerHTML += `<tr>
           <td>${s.productName}</td><td>${s.qty}</td>
           <td>${fmtMoney(s.sellingPrice)}</td><td>${fmtMoney(s.total)}</td>
-          <td>${fmtMoney(s.profit)}</td><td>${s.soldByName || ""}</td><td>${s.date}</td>
+          <td>${fmtMoney(s.profit)}</td><td>${s.date}</td>
         </tr>`;
       });
     }, (err) => {
@@ -300,10 +309,12 @@ function listenRealEstate() {
       snap.forEach((doc) => {
         const r = { id: doc.id, ...doc.data() };
         realEstateCache.push(r);
+        const fullLocation = (r.location || "") + (r.specificLocation ? (" - " + r.specificLocation) : "");
         tbody.innerHTML += `<tr id="re-row-${r.id}">
-          <td>${r.tenantName}</td><td>${HOUSE_LABELS[r.houseType]}</td>
+          <td>${r.tenantName}</td><td>${fullLocation}</td><td>${HOUSE_LABELS[r.houseType]}</td>
           <td>${fmtMoney(r.monthlyRate)}</td><td>${r.months}</td>
           <td>${fmtMoney(r.totalPaid)}</td><td>${r.paymentDate}</td>
+          <td>${r.expectedDueDate || ""}</td>
           <td><button class="link-btn" onclick="deleteRealEstate('${r.id}')">Delete</button></td>
         </tr>`;
       });
@@ -315,15 +326,19 @@ function listenRealEstate() {
 document.getElementById("realEstateForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const tenantName = document.getElementById("tenantName").value.trim();
+  const location = document.getElementById("tenantLocation").value;
+  const specificLocation = document.getElementById("specificLocation").value.trim();
   const houseType = document.getElementById("houseType").value;
   const monthlyRate = RATES[houseType];
   const months = Number(document.getElementById("numMonths").value);
   const paymentDate = document.getElementById("paymentDate").value;
   const totalPaid = monthlyRate * months;
+  const expectedDueDate = computeExpectedDueDate(paymentDate, months);
 
   try {
     await db.collection("ngole_realEstatePayments").add({
-      tenantName, houseType, monthlyRate, months, totalPaid, paymentDate,
+      tenantName, location, specificLocation,
+      houseType, monthlyRate, months, totalPaid, paymentDate, expectedDueDate,
       recordedBy: currentUsername,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -408,15 +423,18 @@ document.getElementById("downloadRealEstatePdf").addEventListener("click", () =>
   doc.setFontSize(10);
   doc.text("Tarehe ya ripoti: " + todayStr(), 14, 23);
 
-  const rows = realEstateCache.map((r) => [
-    r.tenantName, HOUSE_LABELS[r.houseType], fmtMoney(r.monthlyRate),
-    r.months, fmtMoney(r.totalPaid), r.paymentDate
-  ]);
+  const rows = realEstateCache.map((r) => {
+    const fullLocation = (r.location || "") + (r.specificLocation ? (" - " + r.specificLocation) : "");
+    return [
+      r.tenantName, fullLocation, HOUSE_LABELS[r.houseType], fmtMoney(r.monthlyRate),
+      r.months, fmtMoney(r.totalPaid), r.paymentDate, r.expectedDueDate || ""
+    ];
+  });
   doc.autoTable({
     startY: 30,
-    head: [["Mpangaji", "Aina", "Rate/Mwezi", "Miezi", "Jumla", "Tarehe"]],
+    head: [["Mpangaji", "Mahali", "Aina", "Rate/Mwezi", "Miezi", "Jumla", "Tarehe", "Kodi Mpya Kuanzia"]],
     body: rows,
-    styles: { fontSize: 9 }
+    styles: { fontSize: 8 }
   });
   doc.save("NgoleFamily-RealEstate-" + todayStr() + ".pdf");
 });
@@ -506,17 +524,16 @@ function initSalespersonDashboard() {
   if (spInitialized) return;
   spInitialized = true;
 
+  // Bado tunahitaji productsCache kwa ajili ya dropdown ya kuuza na
+  // kuangalia stock, hata kama hatuoneshi tena jedwali la "Stock Iliyopo".
   db.collection("ngole_products").orderBy("createdAt", "desc").limit(200)
     .onSnapshot((snap) => {
-      const tbody = document.querySelector("#spProductsTable tbody");
       const select = document.getElementById("sellProductSelect");
-      tbody.innerHTML = "";
       select.innerHTML = "";
       productsCache = [];
       snap.forEach((doc) => {
         const p = { id: doc.id, ...doc.data() };
         productsCache.push(p);
-        tbody.innerHTML += `<tr><td>${p.name}</td><td>${fmtMoney(p.sellingPrice)}</td><td>${p.stockQty}</td></tr>`;
         select.innerHTML += `<option value="${p.id}">${p.name} (Stock: ${p.stockQty})</option>`;
       });
     }, (err) => {
@@ -530,10 +547,13 @@ function initSalespersonDashboard() {
       const tbody = document.querySelector("#mySalesTable tbody");
       tbody.innerHTML = "";
       const rows = [];
-      snap.forEach((doc) => rows.push(doc.data()));
+      snap.forEach((doc) => rows.push({ id: doc.id, ...doc.data() }));
       rows.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
       rows.forEach((s) => {
-        tbody.innerHTML += `<tr><td>${s.productName}</td><td>${s.qty}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td></tr>`;
+        tbody.innerHTML += `<tr id="sale-row-${s.id}">
+          <td>${s.productName}</td><td>${s.qty}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td>
+          <td><button class="link-btn" onclick="deleteSale('${s.id}')">Delete</button></td>
+        </tr>`;
       });
     }, (err) => {
       showToast("Hitilafu: " + err.message, "error");
@@ -571,3 +591,24 @@ document.getElementById("sellForm").addEventListener("submit", async (e) => {
     showToast("Error: " + err.message, "error");
   }
 });
+
+// Sales Person akikosea kuuza, anaweza kufuta mauzo hayo - stock inarudi kiotomatiki
+async function deleteSale(id) {
+  if (!confirm("Una uhakika unataka kufuta mauzo haya? Stock ya bidhaa itarudishwa.")) return;
+  const row = document.getElementById("sale-row-" + id);
+  if (row) row.remove();
+  showToast("Mauzo yamefutwa, stock imerudishwa.", "success");
+  try {
+    const saleDoc = await db.collection("ngole_sales").doc(id).get();
+    if (!saleDoc.exists) return;
+    const s = saleDoc.data();
+    const batch = db.batch();
+    batch.delete(db.collection("ngole_sales").doc(id));
+    batch.update(db.collection("ngole_products").doc(s.productId), {
+      stockQty: firebase.firestore.FieldValue.increment(s.qty)
+    });
+    await batch.commit();
+  } catch (err) {
+    showToast("Hitilafu kufuta: " + err.message, "error");
+  }
+}
