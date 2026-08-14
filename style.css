@@ -1,0 +1,219 @@
+:root {
+  --paper: #faf6ee;
+  --ink: #2b2621;
+  --line: #d8cfba;
+  --manager-color: #7a3b2e;
+  --sales-color: #2f5e4e;
+  --accent: #b8860b;
+  --danger: #a33b2b;
+  --white: #fffdf8;
+  --radius: 6px;
+  font-family: 'Courier New', 'Georgia', serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Georgia', 'Courier New', serif;
+}
+
+.hidden { display: none !important; }
+
+/* ---------- LOGIN ---------- */
+#loginScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f2ecdd, #e8dfc8);
+}
+
+.login-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 2px;
+  text-align: center;
+  color: var(--manager-color);
+}
+.brand p {
+  text-align: center;
+  margin: 4px 0 20px;
+  font-size: 13px;
+  color: #7a7364;
+}
+
+label { display: block; font-size: 13px; margin: 10px 0 4px; color: #5c5648; }
+input, select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+}
+input:focus, select:focus { outline: 2px solid var(--accent); }
+
+.btn-primary {
+  margin-top: 16px;
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--manager-color);
+  color: var(--white);
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+}
+.btn-primary:hover { opacity: 0.9; }
+
+.btn-outline {
+  padding: 8px 14px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+}
+.btn-outline:hover { background: rgba(0,0,0,0.05); }
+
+.error-text { color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 16px; }
+
+/* ---------- APP SHELL ---------- */
+#appShell { min-height: 100vh; padding-bottom: 40px; }
+
+#appHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  background: var(--white);
+  border-bottom: 2px solid var(--line);
+}
+.header-left { display: flex; align-items: center; gap: 10px; }
+.header-left h2 { margin: 0; letter-spacing: 1px; }
+.badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  color: var(--white);
+  background: var(--manager-color);
+  text-transform: uppercase;
+}
+.badge.sales { background: var(--sales-color); }
+.header-right { display: flex; align-items: center; gap: 14px; font-size: 13px; }
+
+/* Role-based body accent */
+body.role-manager #appHeader { border-bottom-color: var(--manager-color); }
+body.role-salesperson #appHeader { border-bottom-color: var(--sales-color); }
+
+/* ---------- TABS ---------- */
+.tabs {
+  display: flex;
+  gap: 6px;
+  padding: 14px 22px 0;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ink);
+}
+.tab-btn.active { background: var(--manager-color); color: var(--white); border-color: var(--manager-color); }
+.tab-content { display: none; padding: 20px 22px; }
+.tab-content.active { display: block; }
+
+/* ---------- CARDS ---------- */
+.card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 18px;
+}
+.card h3 { margin: 0 0 14px; font-size: 16px; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
+.card-header-row { display: flex; justify-content: space-between; align-items: center; }
+.card-header-row h3 { border-bottom: none; margin: 0; }
+.hint-text { font-size: 12px; color: #7a7364; margin-bottom: 10px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+@media (max-width: 800px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+/* ---------- TABLES ---------- */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td {
+  padding: 9px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+th { color: #5c5648; font-weight: bold; background: #f4efe3; }
+tr:hover td { background: #f9f5ea; }
+
+.link-btn { color: var(--danger); cursor: pointer; background: none; border: none; font-size: 12px; text-decoration: underline; }
+
+/* ---------- SUMMARY ---------- */
+.period-selector { display: flex; gap: 8px; margin-bottom: 10px; }
+.period-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.period-btn.active { background: var(--accent); color: var(--white); }
+.period-label { font-size: 13px; color: #7a7364; margin: 0; }
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stat-label { font-size: 12px; color: #7a7364; }
+.stat-value { font-size: 22px; font-weight: bold; color: var(--manager-color); }
+.total-card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; background: #f4efe3; }
+.stat-value-big { font-size: 30px; font-weight: bold; color: var(--accent); }
+
+/* ---------- TOAST ---------- */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--ink);
+  color: var(--white);
+  padding: 12px 18px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 999;
+}
+.toast.error { background: var(--danger); }
+.toast.success { background: var(--sales-color); }

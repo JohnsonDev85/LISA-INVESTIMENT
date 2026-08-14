@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NGOLE FAMILY INVESTIMENT- Mfumo wa Usimamizi</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="loginScreen" class="screen">
+  <div class="login-card">
+    <div class="brand">
+      <h1>NGOLE FAMILY INVESTIMENT</h1>
+      <p>Mfumo wa Usimamizi wa Biashara</p>
+    </div>
+    <form id="loginForm">
+      <label>Username</label>
+      <input type="text" id="loginUsername" required placeholder="mfano: johnson01" autocapitalize="off" autocorrect="off" spellcheck="false" />
+      <label>Password</label>
+      <input type="password" id="loginPassword" required placeholder="********" autocapitalize="off" autocorrect="off" spellcheck="false" />
+      <button type="submit" class="btn-primary">Login</button>
+      <p id="loginError" class="error-text"></p>
+    </form>
+  </div>
+</div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="appShell" class="screen hidden">
+  <header id="appHeader">
+    <div class="header-left">
+      <h2>NGOLE FAMILY INVESTIMENT</h2>
+      <span id="roleBadge" class="badge"></span>
+    </div>
+    <div class="header-right">
+      <span id="userNameDisplay"></span>
+      <button id="logoutBtn" class="btn-outline">Logout</button>
+    </div>
+  </header>
+
+  <!-- ============ MANAGER DASHBOARD ============ -->
+  <div id="managerDashboard" class="hidden">
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="electronicsTab">Electronics</button>
+      <button class="tab-btn" data-tab="realEstateTab">Real Estate</button>
+      <button class="tab-btn" data-tab="summaryTab">Summary</button>
+      <button class="tab-btn" data-tab="usersTab">Users</button>
+    </nav>
+
+    <!-- ---- ELECTRONICS TAB ---- -->
+    <section id="electronicsTab" class="tab-content active">
+      <div class="grid-2">
+        <div class="card">
+          <h3>Add Bidhaa Mpya</h3>
+          <form id="productForm">
+            <label>Jina la Bidhaa</label>
+            <input type="text" id="prodName" required />
+            <label>Bei ya Kununulia (Buying Price)</label>
+            <input type="number" id="prodBuyPrice" required min="0" />
+            <label>Bei ya Kuuzia (Selling Price)</label>
+            <input type="number" id="prodSellPrice" required min="0" />
+            <label>Stock ya Kuanzia</label>
+            <input type="number" id="prodStock" required min="0" />
+            <button type="submit" class="btn-primary">Add Bidhaa</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Stock In / Out</h3>
+          <form id="stockForm">
+            <label>Chagua Bidhaa</label>
+            <select id="stockProductSelect" required></select>
+            <label>Aina</label>
+            <select id="stockType" required>
+              <option value="in">Stock In (Ongeza bidhaa)</option>
+              <option value="out">Stock Out (Toa bidhaa)</option>
+            </select>
+            <label>Idadi (Qty)</label>
+            <input type="number" id="stockQty" required min="1" />
+            <label>Sababu</label>
+            <input type="text" id="stockReason" placeholder="mfano: bidhaa mpya, imeharibika..." />
+            <button type="submit" class="btn-primary">Rekodi</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>List ya Bidhaa</h3>
+        <div class="table-wrap">
+          <table id="productsTable">
+            <thead>
+              <tr><th>Jina</th><th>Bei ya Kununulia</th><th>Bei ya Kuuzia</th><th>Stock</th><th>Action</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Ripoti ya Mauzo (Sales Report)</h3>
+        <div class="table-wrap">
+          <table id="salesTable">
+            <thead>
+              <tr><th>Bidhaa</th><th>Qty</th><th>Bei Kuuzia</th><th>Jumla</th><th>Faida</th><th>Tarehe</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- REAL ESTATE TAB ---- -->
+    <section id="realEstateTab" class="tab-content">
+      <div class="card">
+        <h3>Add Malipo ya Kodi</h3>
+        <form id="realEstateForm">
+          <label>Jina la Mpangaji</label>
+          <input type="text" id="tenantName" required />
+
+          <label>Aina ya Nyumba / Biashara</label>
+          <select id="houseType" required>
+            <option value="single_room" data-rate="60000">Single Room </option>
+            <option value="chumba_sebule" data-rate="40000">Chumba na Sebule</option>
+            <option value="self_sebule" data-rate="100000">Self & Sebule</option>
+            <option value="frame_biashara" data-rate="150000">Frame ya Biashara </option>
+          </select>
+
+          <label>Idadi ya Miezi ya Kulipia</label>
+          <select id="numMonths" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+
+          <label>Tarehe ya Malipo</label>
+          <input type="date" id="paymentDate" required />
+
+          <label>Jumla ya Kiasi</label>
+          <input type="text" id="totalPaidDisplay" readonly />
+
+          <button type="submit" class="btn-primary">Add Malipo</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-header-row">
+          <h3>Rekodi za Malipo</h3>
+          <button id="downloadRealEstatePdf" class="btn-outline">⬇ Download PDF</button>
+        </div>
+        <div class="table-wrap">
+          <table id="realEstateTable">
+            <thead>
+              <tr><th>Mpangaji</th><th>Aina</th><th>Rate/Mwezi</th><th>Miezi</th><th>Jumla</th><th>Tarehe</th><th>Action</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- SUMMARY TAB ---- -->
+    <section id="summaryTab" class="tab-content">
+      <div class="card">
+        <h3>Filter Summary</h3>
+        <div class="period-selector">
+          <button class="period-btn active" data-period="quarterly">Quarterly</button>
+          <button class="period-btn" data-period="semiannual">Semi-Annual</button>
+          <button class="period-btn" data-period="annual">Annually</button>
+        </div>
+        <p id="periodLabel" class="period-label"></p>
+      </div>
+
+      <div class="grid-3">
+        <div class="stat-card">
+          <span class="stat-label">Faida - Electronics</span>
+          <span id="statElectronicsProfit" class="stat-value">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Mapato - Nyumba za Kupangisha</span>
+          <span id="statRentalIncome" class="stat-value">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Mapato - Frame za Biashara</span>
+          <span id="statFrameIncome" class="stat-value">0</span>
+        </div>
+      </div>
+
+      <div class="card total-card">
+        <span class="stat-label">JUMLA KUU (Total)</span>
+        <span id="statGrandTotal" class="stat-value-big">0</span>
+      </div>
+
+      <div class="card">
+        <button id="downloadSummaryPdf" class="btn-outline">⬇ Download PDF</button>
+      </div>
+    </section>
+
+    <!-- ---- USERS TAB ---- -->
+    <section id="usersTab" class="tab-content">
+      <div class="card">
+        <h3>Register New User</h3>
+        <p class="hint-text">Jaza fomu hii kutengeneza akaunti mpya.</p>
+        <form id="userRoleForm">
+          <label>Jina la Mtumiaji (Username)</label>
+          <input type="text" id="newUsername" required placeholder="mfano: sales01" />
+          <label>Password</label>
+          <input type="text" id="newUserPassword" required placeholder="weka password" />
+          <label>Jina Kamili</label>
+          <input type="text" id="newUserName" required />
+          <label>Role</label>
+          <select id="newUserRole" required>
+            <option value="manager">Manager</option>
+            <option value="salesperson">Sales Person</option>
+          </select>
+          <button type="submit" class="btn-primary">Register User</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Orodha ya Users</h3>
+        <div class="table-wrap">
+          <table id="usersTable">
+            <thead><tr><th>Username</th><th>Jina</th><th>Role</th><th>Action</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ SALESPERSON DASHBOARD ============ -->
+  <div id="salespersonDashboard" class="hidden">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Sell Bidhaa</h3>
+        <form id="sellForm">
+          <label>Chagua Bidhaa</label>
+          <select id="sellProductSelect" required></select>
+          <label>Idadi (Qty)</label>
+          <input type="number" id="sellQty" required min="1" />
+          <button type="submit" class="btn-primary">Sell</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Stock Iliyopo</h3>
+        <div class="table-wrap">
+          <table id="spProductsTable">
+            <thead><tr><th>Bidhaa</th><th>Bei</th><th>Stock</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Recent Sales</h3>
+      <div class="table-wrap">
+        <table id="mySalesTable">
+          <thead><tr><th>Bidhaa</th><th>Qty</th><th>Jumla</th><th>Tarehe</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<!-- Firebase (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<!-- jsPDF for PDF reports -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+<script src="script.js"></script>
+</body>
+</html>
