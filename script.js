@@ -210,7 +210,7 @@ document.getElementById("productForm").addEventListener("submit", async (e) => {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     e.target.reset();
-    showToast("Bidhaa imesajiliwa.", "success");
+    showToast("Product registered.", "success");
   } catch (err) {
     showToast("Hitilafu: " + err.message, "error");
   }
@@ -304,7 +304,7 @@ function listenRealEstate() {
           <td>${r.tenantName}</td><td>${HOUSE_LABELS[r.houseType]}</td>
           <td>${fmtMoney(r.monthlyRate)}</td><td>${r.months}</td>
           <td>${fmtMoney(r.totalPaid)}</td><td>${r.paymentDate}</td>
-          <td><button class="link-btn" onclick="deleteRealEstate('${r.id}')">Futa</button></td>
+          <td><button class="link-btn" onclick="deleteRealEstate('${r.id}')">Delete</button></td>
         </tr>`;
       });
     }, (err) => {
