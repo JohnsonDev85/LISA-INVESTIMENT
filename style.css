@@ -266,6 +266,22 @@ th {
 }
 tr:hover td { background: var(--gold-soft); }
 
+.date-group-row td {
+  background: var(--paper-deep);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--ink);
+}
+.date-total-row td {
+  background: var(--gold-soft);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--gold);
+  border-bottom: 2px solid var(--line);
+}
+
 /* right-align money columns per table */
 #productsTable td:nth-child(2), #productsTable td:nth-child(3) { text-align: right; }
 #salesTable td:nth-child(3), #salesTable td:nth-child(4), #salesTable td:nth-child(5) { text-align: right; }
