@@ -268,18 +268,32 @@ document.getElementById("stockForm").addEventListener("submit", async (e) => {
   }
 });
 
-/* ---- SALES LISTENER (Manager view - ripoti) ---- */
+/* ---- SALES LISTENER (Manager view - ripoti + muhtasari wa siku) ---- */
 function listenSales() {
   db.collection("ngole_sales").orderBy("createdAt", "desc").limit(100)
     .onSnapshot((snap) => {
       const tbody = document.querySelector("#salesTable tbody");
       tbody.innerHTML = "";
+      const byDate = {};
       snap.forEach((doc) => {
         const s = doc.data();
         tbody.innerHTML += `<tr>
           <td>${s.productName}</td><td>${s.qty}</td>
           <td>${fmtMoney(s.sellingPrice)}</td><td>${fmtMoney(s.total)}</td>
           <td>${fmtMoney(s.profit)}</td><td>${s.date}</td>
+        </tr>`;
+        if (!byDate[s.date]) byDate[s.date] = { count: 0, total: 0, profit: 0 };
+        byDate[s.date].count += 1;
+        byDate[s.date].total += Number(s.total || 0);
+        byDate[s.date].profit += Number(s.profit || 0);
+      });
+
+      const summaryTbody = document.querySelector("#dailySalesSummaryTable tbody");
+      summaryTbody.innerHTML = "";
+      Object.keys(byDate).sort((a, b) => b.localeCompare(a)).forEach((date) => {
+        const d = byDate[date];
+        summaryTbody.innerHTML += `<tr>
+          <td>${date}</td><td>${d.count}</td><td>${fmtMoney(d.total)}</td><td>${fmtMoney(d.profit)}</td>
         </tr>`;
       });
     }, (err) => {
@@ -520,6 +534,38 @@ async function deleteUser(id) {
    SALESPERSON DASHBOARD
    ========================================================= */
 let spInitialized = false;
+function updateSellPriceDisplay() {
+  const select = document.getElementById("sellProductSelect");
+  const priceDisplay = document.getElementById("sellPriceDisplay");
+  const product = productsCache.find((p) => p.id === select.value);
+  priceDisplay.value = product ? fmtMoney(product.sellingPrice) : "";
+}
+document.getElementById("sellProductSelect").addEventListener("change", updateSellPriceDisplay);
+
+function renderMySales(rows) {
+  const tbody = document.querySelector("#mySalesTable tbody");
+  tbody.innerHTML = "";
+  const byDate = {};
+  const dateOrder = [];
+  rows.forEach((s) => {
+    if (!byDate[s.date]) { byDate[s.date] = []; dateOrder.push(s.date); }
+    byDate[s.date].push(s);
+  });
+  dateOrder.sort((a, b) => (b || "").localeCompare(a || ""));
+  dateOrder.forEach((date) => {
+    tbody.innerHTML += `<tr class="date-group-row"><td colspan="5">${date}</td></tr>`;
+    let dayTotal = 0;
+    byDate[date].forEach((s) => {
+      dayTotal += Number(s.total || 0);
+      tbody.innerHTML += `<tr id="sale-row-${s.id}">
+        <td>${s.productName}</td><td>${s.qty}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td>
+        <td><button class="link-btn" onclick="deleteSale('${s.id}')">Delete</button></td>
+      </tr>`;
+    });
+    tbody.innerHTML += `<tr class="date-total-row"><td colspan="2">Jumla ya Siku</td><td colspan="3">${fmtMoney(dayTotal)}</td></tr>`;
+  });
+}
+
 function initSalespersonDashboard() {
   if (spInitialized) return;
   spInitialized = true;
@@ -529,6 +575,7 @@ function initSalespersonDashboard() {
   db.collection("ngole_products").orderBy("createdAt", "desc").limit(200)
     .onSnapshot((snap) => {
       const select = document.getElementById("sellProductSelect");
+      const prevSelected = select.value;
       select.innerHTML = "";
       productsCache = [];
       snap.forEach((doc) => {
@@ -536,6 +583,8 @@ function initSalespersonDashboard() {
         productsCache.push(p);
         select.innerHTML += `<option value="${p.id}">${p.name} (Stock: ${p.stockQty})</option>`;
       });
+      if (prevSelected) select.value = prevSelected;
+      updateSellPriceDisplay();
     }, (err) => {
       showToast("Hitilafu: " + err.message, "error");
     });
@@ -544,17 +593,9 @@ function initSalespersonDashboard() {
   // hitaji la composite index - tunapanga (sort) upande wa JS badala yake.
   db.collection("ngole_sales").where("soldBy", "==", currentUsername).limit(20)
     .onSnapshot((snap) => {
-      const tbody = document.querySelector("#mySalesTable tbody");
-      tbody.innerHTML = "";
       const rows = [];
       snap.forEach((doc) => rows.push({ id: doc.id, ...doc.data() }));
-      rows.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
-      rows.forEach((s) => {
-        tbody.innerHTML += `<tr id="sale-row-${s.id}">
-          <td>${s.productName}</td><td>${s.qty}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td>
-          <td><button class="link-btn" onclick="deleteSale('${s.id}')">Delete</button></td>
-        </tr>`;
-      });
+      renderMySales(rows);
     }, (err) => {
       showToast("Hitilafu: " + err.message, "error");
     });
