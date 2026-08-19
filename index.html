@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NGOLE FAMILY INVESTIMENT</title>
+<title>NGOLE FAMILY INVESTIMENT- Mfumo wa Usimamizi</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -45,7 +45,7 @@
       <button class="tab-btn active" data-tab="electronicsTab">Electronics</button>
       <button class="tab-btn" data-tab="realEstateTab">Real Estate</button>
       <button class="tab-btn" data-tab="summaryTab">Summary</button>
-      <button class="tab-btn" data-tab="usersTab">Users</button>
+      <button class="tab-btn" data-tab="expensesTab">Expenses</button>
     </nav>
 
     <!-- ---- ELECTRONICS TAB ---- -->
@@ -120,6 +120,18 @@
           </table>
         </div>
       </div>
+
+      <div class="card">
+        <h3>Makabidhi ya Sales Person</h3>
+        <div class="table-wrap">
+          <table id="remittancesTable">
+            <thead>
+              <tr><th>Tarehe</th><th>Sales Person</th><th>Kiasi</th><th>Status</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
     <!-- ---- REAL ESTATE TAB ---- -->
@@ -142,10 +154,11 @@
 
           <label>Aina ya Nyumba / Biashara</label>
           <select id="houseType" required>
-            <option value="single_room" data-rate="60000">Single Room - 60,000/mwezi</option>
-            <option value="chumba_sebule" data-rate="40000">Chumba na Sebule - 40,000/mwezi</option>
-            <option value="self_sebule" data-rate="100000">Self & Sebule - 100,000/mwezi</option>
-            <option value="frame_biashara" data-rate="150000">Frame ya Biashara - 150,000/mwezi</option>
+            <option value="single_room" data-rate="25000">Single Room - 25,000/mwezi</option>
+            <option value="chumbaself_sebule" data-rate="60000">Chumba self na Sebule - 60,000/mwezi</option>
+            <option value="chumbaself_sebule_jiko" data-rate="100000">Chumbaself sebule & jiko - 100,000/mwezi</option>
+            <option value="frame_biashara" data-rate="50000">Frame ya Biashara - 50,000/mwezi</option>
+            <option value="complete_house" data-rate="150000">Complete House - 150,000/mwezi</option>
           </select>
 
           <label>Idadi ya Miezi ya Kulipia</label>
@@ -196,7 +209,7 @@
         <p id="periodLabel" class="period-label"></p>
       </div>
 
-      <div class="grid-3">
+      <div class="grid-4">
         <div class="stat-card">
           <span class="stat-label">Faida - Electronics</span>
           <span id="statElectronicsProfit" class="stat-value">0</span>
@@ -209,6 +222,19 @@
           <span class="stat-label">Mapato - Frame za Biashara</span>
           <span id="statFrameIncome" class="stat-value">0</span>
         </div>
+        <div class="stat-card">
+          <span class="stat-label">Mapato - Complete House</span>
+          <span id="statCompleteHouseIncome" class="stat-value">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Mapato - Makabidhi (Remittances)</span>
+          <span id="statRemittanceIncome" class="stat-value">0</span>
+        </div>
+      </div>
+
+      <div class="card expense-line">
+        <span class="stat-label">Jumla ya Matumizi (Expenses) kipindi hiki</span>
+        <span id="statTotalExpenses" class="stat-value">0</span>
       </div>
 
       <div class="card total-card">
@@ -221,32 +247,34 @@
       </div>
     </section>
 
-    <!-- ---- USERS TAB ---- -->
-    <section id="usersTab" class="tab-content">
+    <!-- ---- EXPENSES TAB ---- -->
+    <section id="expensesTab" class="tab-content">
       <div class="card">
-        <h3>Register New User</h3>
-        <p class="hint-text">Jaza fomu hii kutengeneza akaunti mpya.</p>
-        <form id="userRoleForm">
-          <label>Jina la Mtumiaji (Username)</label>
-          <input type="text" id="newUsername" required placeholder="mfano: sales01" />
-          <label>Password</label>
-          <input type="text" id="newUserPassword" required placeholder="weka password" />
-          <label>Jina Kamili</label>
-          <input type="text" id="newUserName" required />
-          <label>Role</label>
-          <select id="newUserRole" required>
-            <option value="manager">Manager</option>
-            <option value="salesperson">Sales Person</option>
+        <h3>Add Expense</h3>
+        <form id="expenseForm">
+          <label>Tarehe</label>
+          <input type="date" id="expenseDate" required />
+          <label>Maelezo ya Expense</label>
+          <input type="text" id="expenseDesc" required placeholder="mfano: mafuta, ukarabati, usafiri..." />
+          <label>Source of Fund</label>
+          <select id="expenseSource" required>
+            <option value="electronics">Electronics</option>
+            <option value="realestate">Real Estate (Nyumba za Kupangisha)</option>
+            <option value="frame">Frame za Biashara</option>
+            <option value="completehouse">Complete House</option>
+            <option value="jumla">Jumla (Vyote)</option>
           </select>
-          <button type="submit" class="btn-primary">Register User</button>
+          <label>Kiasi cha Expense</label>
+          <input type="number" id="expenseAmount" required min="0" />
+          <button type="submit" class="btn-primary">Save Expense</button>
         </form>
       </div>
 
       <div class="card">
-        <h3>Orodha ya Users</h3>
+        <h3>Rekodi za Expenses</h3>
         <div class="table-wrap">
-          <table id="usersTable">
-            <thead><tr><th>Username</th><th>Jina</th><th>Role</th><th>Action</th></tr></thead>
+          <table id="expensesTable">
+            <thead><tr><th>Tarehe</th><th>Maelezo</th><th>Source</th><th>Kiasi</th><th>Action</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -267,6 +295,23 @@
         <input type="number" id="sellQty" required min="1" />
         <button type="submit" class="btn-primary">Sell</button>
       </form>
+    </div>
+
+    <div class="card">
+      <h3>Kabidhi Pesa kwa Manager</h3>
+      <form id="remittanceForm">
+        <label>Tarehe</label>
+        <input type="date" id="remittanceDate" required />
+        <label>Kiasi Ulichokabidhi</label>
+        <input type="number" id="remittanceAmount" required min="0" />
+        <button type="submit" class="btn-primary">Save</button>
+      </form>
+      <div class="table-wrap" style="margin-top: 18px;">
+        <table id="remittanceHistoryTable">
+          <thead><tr><th>Tarehe</th><th>Kiasi</th><th>Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="card">
