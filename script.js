@@ -518,13 +518,13 @@ document.getElementById("downloadSummaryPdf").addEventListener("click", () => {
       ["Mapato - Nyumba za Kupangisha", fmtMoney(lastSummaryData.rentalIncome)],
       ["Mapato - Frame za Biashara", fmtMoney(lastSummaryData.frameIncome)],
       ["Mapato - Complete House", fmtMoney(lastSummaryData.completeHouseIncome)],
-      ["Mapato - Makabidhi (Remittances)", fmtMoney(lastSummaryData.remittanceIncome)],
+      ["Mapato - Movie service", fmtMoney(lastSummaryData.remittanceIncome)],
       ["Jumla ya Matumizi (Expenses)", fmtMoney(lastSummaryData.totalExpenses)],
       ["JUMLA KUU", fmtMoney(lastSummaryData.grandTotal)]
     ],
     styles: { fontSize: 10 }
   });
-  doc.save("NgoleFamily-Muhtasari-" + todayStr() + ".pdf");
+  doc.save("NgoleFamily-Summary-" + todayStr() + ".pdf");
 });
 
 /* ---- EXPENSES ---- */
@@ -544,7 +544,7 @@ document.getElementById("expenseForm").addEventListener("submit", async (e) => {
     });
     e.target.reset();
     document.getElementById("expenseDate").value = todayStr();
-    showToast("Expense imesajiliwa.", "success");
+    showToast("Expense added.", "success");
     loadSummary();
   } catch (err) {
     showToast("Hitilafu: " + err.message, "error");
@@ -611,7 +611,7 @@ async function approveRemittance(id) {
       approvedBy: currentUsername,
       approvedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    showToast("Umeidhinisha kupokea.", "success");
+    showToast("Approve.", "success");
     loadSummary();
   } catch (err) {
     showToast("Hitilafu: " + err.message, "error");
@@ -644,7 +644,7 @@ document.getElementById("remittanceForm").addEventListener("submit", async (e) =
     });
     e.target.reset();
     document.getElementById("remittanceDate").value = todayStr();
-    showToast("Umekabidhi, inasubiri idhini ya Manager.", "success");
+    showToast("Submitted, waiting for Manager approval.", "success");
   } catch (err) {
     showToast("Hitilafu: " + err.message, "error");
   }
