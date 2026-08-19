@@ -250,13 +250,12 @@ body.role-salesperson #appHeader { border-bottom-color: var(--electronics); }
 
 /* ---------- TABLES (ledger rows) ---------- */
 .table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-mono); table-layout: fixed; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-mono); }
 th, td {
   padding: 10px 9px;
   border-bottom: 1px solid var(--line);
   text-align: left;
-  white-space: normal;
-  word-break: break-word;
+  white-space: nowrap;
 }
 th {
   color: var(--ink-soft);
@@ -285,24 +284,36 @@ tr:hover td { background: var(--gold-soft); }
 }
 
 /* right-align money columns per table */
-#productsTable td:nth-child(2), #productsTable td:nth-child(3) { text-align: right; }
-#salesTable td:nth-child(3), #salesTable td:nth-child(4), #salesTable td:nth-child(5) { text-align: right; }
-#realEstateTable td:nth-child(4), #realEstateTable td:nth-child(6) { text-align: right; }
-#spProductsTable td:nth-child(2) { text-align: right; }
-#mySalesTable td:nth-child(3) { text-align: right; }
-#remittanceHistoryTable td:nth-child(2) { text-align: right; }
-#remittancesTable td:nth-child(3) { text-align: right; }
+#productsTable th:nth-child(2), #productsTable td:nth-child(2),
+#productsTable th:nth-child(3), #productsTable td:nth-child(3) { text-align: right; }
+
+#salesTable th:nth-child(3), #salesTable td:nth-child(3),
+#salesTable th:nth-child(4), #salesTable td:nth-child(4),
+#salesTable th:nth-child(5), #salesTable td:nth-child(5) { text-align: right; }
+
+#dailySalesSummaryTable th:nth-child(2), #dailySalesSummaryTable td:nth-child(2),
+#dailySalesSummaryTable th:nth-child(3), #dailySalesSummaryTable td:nth-child(3),
+#dailySalesSummaryTable th:nth-child(4), #dailySalesSummaryTable td:nth-child(4) { text-align: right; }
+
+#realEstateTable th:nth-child(4), #realEstateTable td:nth-child(4),
+#realEstateTable th:nth-child(6), #realEstateTable td:nth-child(6) { text-align: right; }
+
+#expensesTable th:nth-child(4), #expensesTable td:nth-child(4) { text-align: right; }
+
+#spProductsTable th:nth-child(2), #spProductsTable td:nth-child(2) { text-align: right; }
+
+#mySalesTable th:nth-child(3), #mySalesTable td:nth-child(3) { text-align: right; }
+
+#remittanceHistoryTable th:nth-child(2), #remittanceHistoryTable td:nth-child(2) { text-align: right; }
+
+#remittancesTable th:nth-child(3), #remittancesTable td:nth-child(3) { text-align: right; }
 
 /* Fix column alignment on wide screens (laptop) - bila hii, mistari yenye
    colspan (kichwa cha siku, jumla ya siku) hupanga columns tofauti na
    mistari ya kawaida kwenye screen pana */
-#mySalesTable { table-layout: fixed; }
-#mySalesTable th, #mySalesTable td { white-space: normal; word-break: break-word; }
-#mySalesTable th:nth-child(1), #mySalesTable td:nth-child(1) { width: 30%; }
-#mySalesTable th:nth-child(2), #mySalesTable td:nth-child(2) { width: 12%; }
-#mySalesTable th:nth-child(3), #mySalesTable td:nth-child(3) { width: 20%; }
-#mySalesTable th:nth-child(4), #mySalesTable td:nth-child(4) { width: 20%; }
-#mySalesTable th:nth-child(5), #mySalesTable td:nth-child(5) { width: 18%; }
+/* Kumbuka: hatuhitaji table-layout:fixed kwa mySalesTable - mistari ya kawaida
+   (yenye columns 5) tayari inaamua upana wa kila column; mistari ya colspan
+   (kichwa cha siku, jumla ya siku) yanafuata hiyo grid moja kwa moja. */
 
 .link-btn {
   color: var(--stamp-red);
