@@ -661,7 +661,10 @@ function renderMySales(rows) {
   });
   dateOrder.sort((a, b) => (b || "").localeCompare(a || ""));
   dateOrder.forEach((date) => {
-    tbody.innerHTML += `<tr class="date-group-row"><td colspan="5">${date}</td></tr>`;
+    // Hakuna colspan - kila mstari una columns 5 halisi (baadhi tupu), ili
+    // browser ipange upana wa kila column kwa usawa kwenye mistari YOTE
+    // (kichwa cha siku, mauzo, jumla ya siku) bila kuchanganyikiwa.
+    tbody.innerHTML += `<tr class="date-group-row"><td>${date}</td><td></td><td></td><td></td><td></td></tr>`;
     let dayTotal = 0;
     byDate[date].forEach((s) => {
       dayTotal += Number(s.total || 0);
@@ -670,7 +673,7 @@ function renderMySales(rows) {
         <td><button class="link-btn" onclick="deleteSale('${s.id}')">Delete</button></td>
       </tr>`;
     });
-    tbody.innerHTML += `<tr class="date-total-row"><td colspan="2">Jumla ya Siku</td><td colspan="3">${fmtMoney(dayTotal)}</td></tr>`;
+    tbody.innerHTML += `<tr class="date-total-row"><td>Jumla ya Siku</td><td></td><td>${fmtMoney(dayTotal)}</td><td></td><td></td></tr>`;
   });
 }
 
