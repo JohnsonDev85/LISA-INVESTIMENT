@@ -209,7 +209,7 @@ body.role-salesperson #appHeader { border-bottom-color: var(--electronics); }
 .tab-btn[data-tab="electronicsTab"].active { box-shadow: 0 -3px 0 var(--electronics) inset; }
 .tab-btn[data-tab="realEstateTab"].active { box-shadow: 0 -3px 0 var(--realestate) inset; }
 .tab-btn[data-tab="summaryTab"].active { box-shadow: 0 -3px 0 var(--gold) inset; }
-.tab-btn[data-tab="usersTab"].active { box-shadow: 0 -3px 0 var(--ink-soft) inset; }
+.tab-btn[data-tab="expensesTab"].active { box-shadow: 0 -3px 0 var(--ink-soft) inset; }
 
 .tab-content {
   display: none;
@@ -241,6 +241,7 @@ body.role-salesperson #appHeader { border-bottom-color: var(--electronics); }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 18px; }
 @media (max-width: 800px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
 /* Division accents by tab context */
@@ -249,12 +250,13 @@ body.role-salesperson #appHeader { border-bottom-color: var(--electronics); }
 
 /* ---------- TABLES (ledger rows) ---------- */
 .table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-mono); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-mono); table-layout: fixed; }
 th, td {
   padding: 10px 9px;
   border-bottom: 1px solid var(--line);
   text-align: left;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
 }
 th {
   color: var(--ink-soft);
@@ -288,6 +290,19 @@ tr:hover td { background: var(--gold-soft); }
 #realEstateTable td:nth-child(4), #realEstateTable td:nth-child(6) { text-align: right; }
 #spProductsTable td:nth-child(2) { text-align: right; }
 #mySalesTable td:nth-child(3) { text-align: right; }
+#remittanceHistoryTable td:nth-child(2) { text-align: right; }
+#remittancesTable td:nth-child(3) { text-align: right; }
+
+/* Fix column alignment on wide screens (laptop) - bila hii, mistari yenye
+   colspan (kichwa cha siku, jumla ya siku) hupanga columns tofauti na
+   mistari ya kawaida kwenye screen pana */
+#mySalesTable { table-layout: fixed; }
+#mySalesTable th, #mySalesTable td { white-space: normal; word-break: break-word; }
+#mySalesTable th:nth-child(1), #mySalesTable td:nth-child(1) { width: 30%; }
+#mySalesTable th:nth-child(2), #mySalesTable td:nth-child(2) { width: 12%; }
+#mySalesTable th:nth-child(3), #mySalesTable td:nth-child(3) { width: 20%; }
+#mySalesTable th:nth-child(4), #mySalesTable td:nth-child(4) { width: 20%; }
+#mySalesTable th:nth-child(5), #mySalesTable td:nth-child(5) { width: 18%; }
 
 .link-btn {
   color: var(--stamp-red);
@@ -333,6 +348,27 @@ tr:hover td { background: var(--gold-soft); }
 .grid-3 .stat-card:nth-child(1) { border-left-color: var(--electronics); }
 .grid-3 .stat-card:nth-child(2) { border-left-color: var(--realestate); }
 .grid-3 .stat-card:nth-child(3) { border-left-color: var(--realestate); }
+
+.grid-4 .stat-card:nth-child(1) { border-left-color: var(--electronics); }
+.grid-4 .stat-card:nth-child(2) { border-left-color: var(--realestate); }
+.grid-4 .stat-card:nth-child(3) { border-left-color: var(--realestate); }
+.grid-4 .stat-card:nth-child(4) { border-left-color: var(--gold); }
+.grid-4 .stat-card:nth-child(5) { border-left-color: var(--electronics); }
+
+.expense-line { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.expense-line .stat-value { color: var(--stamp-red); }
+
+.status-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.status-pending { background: var(--realestate-soft); color: var(--realestate); }
+.status-approved { background: var(--electronics-soft); color: var(--electronics); }
 
 .stat-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-soft); }
 .stat-value { font-family: var(--font-mono); font-size: 24px; font-weight: 600; color: var(--ink); }
