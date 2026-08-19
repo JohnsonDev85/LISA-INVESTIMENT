@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NGOLE FAMILY INVESTIMENT- Mfumo wa Usimamizi</title>
+<title>NGOLE FAMILY INVESTIMENT</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -110,7 +110,7 @@
       </div>
 
       <div class="card">
-        <h3>Muhtasari wa Mauzo kwa Siku</h3>
+        <h3>Summary ya Mauzo kwa Siku</h3>
         <div class="table-wrap">
           <table id="dailySalesSummaryTable">
             <thead>
@@ -122,11 +122,11 @@
       </div>
 
       <div class="card">
-        <h3>Makabidhi ya Sales Person</h3>
+        <h3>Movie service</h3>
         <div class="table-wrap">
           <table id="remittancesTable">
             <thead>
-              <tr><th>Tarehe</th><th>Sales Person</th><th>Kiasi</th><th>Status</th></tr>
+              <tr><th>Tarehe</th><th>Kiasi</th><th>Status</th></tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -154,11 +154,11 @@
 
           <label>Aina ya Nyumba / Biashara</label>
           <select id="houseType" required>
-            <option value="single_room" data-rate="25000">Single Room - 25,000/mwezi</option>
-            <option value="chumbaself_sebule" data-rate="60000">Chumba self na Sebule - 60,000/mwezi</option>
-            <option value="chumbaself_sebule_jiko" data-rate="100000">Chumbaself sebule & jiko - 100,000/mwezi</option>
-            <option value="frame_biashara" data-rate="50000">Frame ya Biashara - 50,000/mwezi</option>
-            <option value="complete_house" data-rate="150000">Complete House - 150,000/mwezi</option>
+            <option value="single_room" data-rate="25000">Single Room</option>
+            <option value="chumbaself_sebule" data-rate="60000">Chumba self na Sebule</option>
+            <option value="chumbaself_sebule_jiko" data-rate="100000">Chumba self sebule & jiko </option>
+            <option value="frame_biashara" data-rate="50000">Frame ya Biashara </option>
+            <option value="complete_house" data-rate="150000">Complete House</option>
           </select>
 
           <label>Idadi ya Miezi ya Kulipia</label>
@@ -189,7 +189,7 @@
         <div class="table-wrap">
           <table id="realEstateTable">
             <thead>
-              <tr><th>Mpangaji</th><th>Mahali</th><th>Aina</th><th>Rate/Mwezi</th><th>Miezi</th><th>Jumla</th><th>Tarehe</th><th>Kodi Mpya Kuanzia</th><th>Action</th></tr>
+              <tr><th>Mpangaji</th><th>Mahali</th><th>Aina</th><th>Rate/Mwezi</th><th>Miezi</th><th>Jumla</th><th>Tarehe</th><th>Tarehe ya kuanza kodi mpya</th><th>Action</th></tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -227,7 +227,7 @@
           <span id="statCompleteHouseIncome" class="stat-value">0</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Mapato - Makabidhi (Remittances)</span>
+          <span class="stat-label">Mapato - Movie service</span>
           <span id="statRemittanceIncome" class="stat-value">0</span>
         </div>
       </div>
@@ -298,11 +298,11 @@
     </div>
 
     <div class="card">
-      <h3>Kabidhi Pesa kwa Manager</h3>
+      <h3>Submit Pesa kwa Manager</h3>
       <form id="remittanceForm">
         <label>Tarehe</label>
         <input type="date" id="remittanceDate" required />
-        <label>Kiasi Ulichokabidhi</label>
+        <label>Amount submited</label>
         <input type="number" id="remittanceAmount" required min="0" />
         <button type="submit" class="btn-primary">Save</button>
       </form>
