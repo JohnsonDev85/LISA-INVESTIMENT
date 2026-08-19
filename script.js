@@ -16,16 +16,25 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 const RATES = {
-  single_room: 60000,
-  chumba_sebule: 40000,
-  self_sebule: 100000,
-  frame_biashara: 150000
+  single_room: 25000,
+  chumbaself_sebule: 60000,
+  chumbaself_sebule_jiko: 100000,
+  frame_biashara: 50000,
+  complete_house: 150000
 };
 const HOUSE_LABELS = {
   single_room: "Single Room",
-  chumba_sebule: "Chumba na Sebule",
-  self_sebule: "Self & Sebule",
-  frame_biashara: "Frame ya Biashara"
+  chumbaself_sebule: "Chumba self na Sebule",
+  chumbaself_sebule_jiko: "Chumbaself sebule & jiko",
+  frame_biashara: "Frame ya Biashara",
+  complete_house: "Complete House"
+};
+const EXPENSE_SOURCE_LABELS = {
+  electronics: "Electronics",
+  realestate: "Real Estate",
+  frame: "Frame za Biashara",
+  completehouse: "Complete House",
+  jumla: "Jumla (Vyote)"
 };
 
 let currentUser = null;
@@ -177,7 +186,8 @@ function initManagerDashboard() {
   listenProducts();
   listenSales();
   listenRealEstate();
-  listenUsers();
+  listenExpenses();
+  listenRemittances();
   loadSummary();
 }
 
@@ -402,9 +412,11 @@ async function loadSummary() {
   const startDate = daysAgoStr(months);
   document.getElementById("periodLabel").textContent = PERIOD_LABELS_SW[currentPeriod] + " (kuanzia " + startDate + ")";
 
-  const [salesSnap, reSnap] = await Promise.all([
+  const [salesSnap, reSnap, expSnap, remSnap] = await Promise.all([
     db.collection("ngole_sales").where("date", ">=", startDate).get(),
-    db.collection("ngole_realEstatePayments").where("paymentDate", ">=", startDate).get()
+    db.collection("ngole_realEstatePayments").where("paymentDate", ">=", startDate).get(),
+    db.collection("ngole_expenses").where("date", ">=", startDate).get(),
+    db.collection("ngole_remittances").where("date", ">=", startDate).get()
   ]);
 
   let electronicsProfit = 0;
@@ -412,20 +424,54 @@ async function loadSummary() {
 
   let rentalIncome = 0;
   let frameIncome = 0;
+  let completeHouseIncome = 0;
   reSnap.forEach((doc) => {
     const r = doc.data();
     if (r.houseType === "frame_biashara") frameIncome += Number(r.totalPaid || 0);
+    else if (r.houseType === "complete_house") completeHouseIncome += Number(r.totalPaid || 0);
     else rentalIncome += Number(r.totalPaid || 0);
   });
 
-  const grandTotal = electronicsProfit + rentalIncome + frameIncome;
+  // Expenses zinakatwa kutoka kwenye source husika. Source "jumla" inakatwa
+  // moja kwa moja kwenye JUMLA KUU tu, si kwenye kila category (kuepuka kukata mara nyingi).
+  let expElectronics = 0, expRealestate = 0, expFrame = 0, expCompleteHouse = 0, expJumla = 0;
+  expSnap.forEach((doc) => {
+    const ex = doc.data();
+    const amt = Number(ex.amount || 0);
+    if (ex.source === "electronics") expElectronics += amt;
+    else if (ex.source === "realestate") expRealestate += amt;
+    else if (ex.source === "frame") expFrame += amt;
+    else if (ex.source === "completehouse") expCompleteHouse += amt;
+    else if (ex.source === "jumla") expJumla += amt;
+  });
+
+  electronicsProfit -= expElectronics;
+  rentalIncome -= expRealestate;
+  frameIncome -= expFrame;
+  completeHouseIncome -= expCompleteHouse;
+
+  // Makabidhi (remittances) - INAHESABIWA tu kama status="approved"
+  let remittanceIncome = 0;
+  remSnap.forEach((doc) => {
+    const r = doc.data();
+    if (r.status === "approved") remittanceIncome += Number(r.amount || 0);
+  });
+
+  const totalExpenses = expElectronics + expRealestate + expFrame + expCompleteHouse + expJumla;
+  const grandTotal = electronicsProfit + rentalIncome + frameIncome + completeHouseIncome + remittanceIncome - expJumla;
 
   document.getElementById("statElectronicsProfit").textContent = fmtMoney(electronicsProfit);
   document.getElementById("statRentalIncome").textContent = fmtMoney(rentalIncome);
   document.getElementById("statFrameIncome").textContent = fmtMoney(frameIncome);
+  document.getElementById("statCompleteHouseIncome").textContent = fmtMoney(completeHouseIncome);
+  document.getElementById("statRemittanceIncome").textContent = fmtMoney(remittanceIncome);
+  document.getElementById("statTotalExpenses").textContent = fmtMoney(totalExpenses);
   document.getElementById("statGrandTotal").textContent = fmtMoney(grandTotal);
 
-  lastSummaryData = { electronicsProfit, rentalIncome, frameIncome, grandTotal, startDate, period: currentPeriod };
+  lastSummaryData = {
+    electronicsProfit, rentalIncome, frameIncome, completeHouseIncome, remittanceIncome,
+    totalExpenses, grandTotal, startDate, period: currentPeriod
+  };
 }
 
 /* ---- PDF: Real Estate Records ---- */
@@ -471,6 +517,9 @@ document.getElementById("downloadSummaryPdf").addEventListener("click", () => {
       ["Faida - Electronics", fmtMoney(lastSummaryData.electronicsProfit)],
       ["Mapato - Nyumba za Kupangisha", fmtMoney(lastSummaryData.rentalIncome)],
       ["Mapato - Frame za Biashara", fmtMoney(lastSummaryData.frameIncome)],
+      ["Mapato - Complete House", fmtMoney(lastSummaryData.completeHouseIncome)],
+      ["Mapato - Makabidhi (Remittances)", fmtMoney(lastSummaryData.remittanceIncome)],
+      ["Jumla ya Matumizi (Expenses)", fmtMoney(lastSummaryData.totalExpenses)],
       ["JUMLA KUU", fmtMoney(lastSummaryData.grandTotal)]
     ],
     styles: { fontSize: 10 }
@@ -478,53 +527,92 @@ document.getElementById("downloadSummaryPdf").addEventListener("click", () => {
   doc.save("NgoleFamily-Muhtasari-" + todayStr() + ".pdf");
 });
 
-/* ---- USER MANAGEMENT (username/password, kama Ustawi) ---- */
-document.getElementById("userRoleForm").addEventListener("submit", async (e) => {
+/* ---- EXPENSES ---- */
+document.getElementById("expenseDate").value = todayStr();
+
+document.getElementById("expenseForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const username = document.getElementById("newUsername").value.trim();
-  const password = document.getElementById("newUserPassword").value.trim();
-  const name = document.getElementById("newUserName").value.trim();
-  const role = document.getElementById("newUserRole").value;
+  const date = document.getElementById("expenseDate").value;
+  const description = document.getElementById("expenseDesc").value.trim();
+  const source = document.getElementById("expenseSource").value;
+  const amount = Number(document.getElementById("expenseAmount").value);
   try {
-    const existing = await db.collection("ngole_users").where("username", "==", username).limit(1).get();
-    if (!existing.empty) {
-      showToast("Username hii tayari ipo, chagua nyingine.", "error");
-      return;
-    }
-    await db.collection("ngole_users").add({
-      username, password, name, role,
+    await db.collection("ngole_expenses").add({
+      date, description, source, amount,
+      recordedBy: currentUsername,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     e.target.reset();
-    showToast("User Added.", "success");
+    document.getElementById("expenseDate").value = todayStr();
+    showToast("Expense imesajiliwa.", "success");
+    loadSummary();
   } catch (err) {
     showToast("Hitilafu: " + err.message, "error");
   }
 });
 
-function listenUsers() {
-  db.collection("ngole_users").orderBy("createdAt", "desc").limit(100)
+function listenExpenses() {
+  db.collection("ngole_expenses").orderBy("createdAt", "desc").limit(200)
     .onSnapshot((snap) => {
-      const tbody = document.querySelector("#usersTable tbody");
+      const tbody = document.querySelector("#expensesTable tbody");
       tbody.innerHTML = "";
       snap.forEach((doc) => {
-        const u = doc.data();
-        tbody.innerHTML += `<tr id="user-row-${doc.id}">
-          <td>${u.username}</td><td>${u.name}</td><td>${u.role}</td>
-          <td><button class="link-btn" onclick="deleteUser('${doc.id}')">Delete</button></td>
+        const ex = doc.data();
+        tbody.innerHTML += `<tr id="exp-row-${doc.id}">
+          <td>${ex.date}</td><td>${ex.description}</td>
+          <td>${EXPENSE_SOURCE_LABELS[ex.source] || ex.source}</td>
+          <td>${fmtMoney(ex.amount)}</td>
+          <td><button class="link-btn" onclick="deleteExpense('${doc.id}')">Delete</button></td>
         </tr>`;
       });
     }, (err) => {
       showToast("Hitilafu: " + err.message, "error");
     });
 }
-async function deleteUser(id) {
-  if (!confirm("Una uhakika unataka kufuta user huyu?")) return;
-  const row = document.getElementById("user-row-" + id);
+async function deleteExpense(id) {
+  if (!confirm("Una uhakika unataka kufuta expense hii?")) return;
+  const row = document.getElementById("exp-row-" + id);
   if (row) row.remove();
-  showToast("User amefutwa.", "success");
+  showToast("Expense imefutwa.", "success");
   try {
-    await db.collection("ngole_users").doc(id).delete();
+    await db.collection("ngole_expenses").doc(id).delete();
+    loadSummary();
+  } catch (err) {
+    showToast("Hitilafu: " + err.message, "error");
+  }
+}
+
+/* ---- REMITTANCES (Sales Person -> Manager cash handover) ---- */
+function listenRemittances() {
+  db.collection("ngole_remittances").orderBy("createdAt", "desc").limit(100)
+    .onSnapshot((snap) => {
+      const tbody = document.querySelector("#remittancesTable tbody");
+      tbody.innerHTML = "";
+      snap.forEach((doc) => {
+        const r = doc.data();
+        const badge = r.status === "approved"
+          ? '<span class="status-badge status-approved">Approved</span>'
+          : `<button class="link-btn" onclick="approveRemittance('${doc.id}')">Approve</button>`;
+        tbody.innerHTML += `<tr id="rem-row-${doc.id}">
+          <td>${r.date}</td><td>${r.submittedByName || r.submittedBy}</td>
+          <td>${fmtMoney(r.amount)}</td><td>${badge}</td>
+        </tr>`;
+      });
+    }, (err) => {
+      showToast("Hitilafu: " + err.message, "error");
+    });
+}
+
+async function approveRemittance(id) {
+  if (!confirm("Umepokea pesa hii kutoka kwa sales person?")) return;
+  try {
+    await db.collection("ngole_remittances").doc(id).update({
+      status: "approved",
+      approvedBy: currentUsername,
+      approvedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showToast("Umeidhinisha kupokea.", "success");
+    loadSummary();
   } catch (err) {
     showToast("Hitilafu: " + err.message, "error");
   }
@@ -541,6 +629,26 @@ function updateSellPriceDisplay() {
   priceDisplay.value = product ? fmtMoney(product.sellingPrice) : "";
 }
 document.getElementById("sellProductSelect").addEventListener("change", updateSellPriceDisplay);
+
+document.getElementById("remittanceDate").value = todayStr();
+document.getElementById("remittanceForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const date = document.getElementById("remittanceDate").value;
+  const amount = Number(document.getElementById("remittanceAmount").value);
+  try {
+    await db.collection("ngole_remittances").add({
+      date, amount,
+      submittedBy: currentUsername, submittedByName: currentUserName,
+      status: "pending",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    e.target.reset();
+    document.getElementById("remittanceDate").value = todayStr();
+    showToast("Umekabidhi, inasubiri idhini ya Manager.", "success");
+  } catch (err) {
+    showToast("Hitilafu: " + err.message, "error");
+  }
+});
 
 function renderMySales(rows) {
   const tbody = document.querySelector("#mySalesTable tbody");
@@ -596,6 +704,25 @@ function initSalespersonDashboard() {
       const rows = [];
       snap.forEach((doc) => rows.push({ id: doc.id, ...doc.data() }));
       renderMySales(rows);
+    }, (err) => {
+      showToast("Hitilafu: " + err.message, "error");
+    });
+
+  // Historia ya makabidhi ya huyu sales person - hakuna orderBy pamoja na where
+  // kuepuka composite index, tunapanga upande wa JS.
+  db.collection("ngole_remittances").where("submittedBy", "==", currentUsername).limit(20)
+    .onSnapshot((snap) => {
+      const rows = [];
+      snap.forEach((doc) => rows.push({ id: doc.id, ...doc.data() }));
+      rows.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+      const tbody = document.querySelector("#remittanceHistoryTable tbody");
+      tbody.innerHTML = "";
+      rows.forEach((r) => {
+        const badge = r.status === "approved"
+          ? '<span class="status-badge status-approved">Approved</span>'
+          : '<span class="status-badge status-pending">Pending</span>';
+        tbody.innerHTML += `<tr><td>${r.date}</td><td>${fmtMoney(r.amount)}</td><td>${badge}</td></tr>`;
+      });
     }, (err) => {
       showToast("Hitilafu: " + err.message, "error");
     });
