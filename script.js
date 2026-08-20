@@ -664,13 +664,16 @@ function renderMySales(rows) {
     // Hakuna colspan - kila mstari una columns 5 halisi (baadhi tupu), ili
     // browser ipange upana wa kila column kwa usawa kwenye mistari YOTE
     // (kichwa cha siku, mauzo, jumla ya siku) bila kuchanganyikiwa.
-    tbody.innerHTML += `<tr class="date-group-row"><td>${date}</td><td></td><td></td><td></td><td></td></tr>`;
+    // Kichwa cha tarehe kimeondolewa - tarehe tayari inaonekana kwenye column ya Tarehe ya kila mauzo
     let dayTotal = 0;
     byDate[date].forEach((s) => {
       dayTotal += Number(s.total || 0);
       tbody.innerHTML += `<tr id="sale-row-${s.id}">
-        <td>${s.productName}</td><td>${s.qty}</td><td>${fmtMoney(s.total)}</td><td>${s.date}</td>
-        <td><button class="link-btn" onclick="deleteSale('${s.id}')">Delete</button></td>
+        <td data-label="Bidhaa">${s.productName}</td>
+        <td data-label="Qty">${s.qty}</td>
+        <td data-label="Jumla">${fmtMoney(s.total)}</td>
+        <td data-label="Tarehe">${s.date}</td>
+        <td data-label="Action"><button class="link-btn" onclick="deleteSale('${s.id}')">Delete</button></td>
       </tr>`;
     });
     tbody.innerHTML += `<tr class="date-total-row"><td>Jumla ya Siku</td><td></td><td>${fmtMoney(dayTotal)}</td><td></td><td></td></tr>`;
