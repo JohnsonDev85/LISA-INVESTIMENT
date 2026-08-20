@@ -315,6 +315,72 @@ tr:hover td { background: var(--gold-soft); }
    (yenye columns 5) tayari inaamua upana wa kila column; mistari ya colspan
    (kichwa cha siku, jumla ya siku) yanafuata hiyo grid moja kwa moja. */
 
+/* ---------- MOBILE CARD VIEW kwa Recent Sales (mySalesTable) ----------
+   Kwenye simu, badala ya kujaribu kulazimisha table iendelee kupangika
+   kama columns (jambo linaloleta matatizo daima), tunaibadilisha kuwa
+   "cards" - kila mauzo linaonekana kama kadi yenye majina ya fields wazi.
+   Hii ni njia ya uhakika ya "responsive tables" isiyohitaji fixed width
+   wala horizontal scroll. */
+@media (max-width: 700px) {
+  #mySalesTable thead { display: none; }
+  #mySalesTable, #mySalesTable tbody, #mySalesTable tr, #mySalesTable td {
+    display: block;
+    width: 100%;
+  }
+  #mySalesTable tbody tr:not(.date-group-row):not(.date-total-row) {
+    margin-bottom: 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--white);
+  }
+  #mySalesTable tbody tr:not(.date-group-row):not(.date-total-row) td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 9px 12px;
+    white-space: normal;
+    border-bottom: 1px solid var(--line);
+  }
+  #mySalesTable tbody tr:not(.date-group-row):not(.date-total-row) td:last-child {
+    border-bottom: none;
+  }
+  #mySalesTable tbody tr:not(.date-group-row):not(.date-total-row) td::before {
+    content: attr(data-label);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-align: left;
+    padding-right: 10px;
+  }
+
+  /* Kichwa cha siku - onesha tarehe tu, ficha zile cells tupu */
+  #mySalesTable .date-group-row td:not(:first-child) { display: none; }
+  #mySalesTable .date-group-row td:first-child {
+    text-align: left;
+    padding: 10px 12px;
+    margin-top: 6px;
+  }
+
+  /* Jumla ya siku - onesha jina la field na kiasi tu, ficha zile tupu */
+  #mySalesTable .date-total-row td:nth-child(2),
+  #mySalesTable .date-total-row td:nth-child(4),
+  #mySalesTable .date-total-row td:nth-child(5) { display: none; }
+  #mySalesTable .date-total-row td:first-child {
+    display: inline-flex;
+    width: auto;
+    padding: 10px 6px 10px 12px;
+  }
+  #mySalesTable .date-total-row td:nth-child(3) {
+    display: inline-flex;
+    width: auto;
+    padding: 10px 12px 10px 6px;
+  }
+}
+
 .link-btn {
   color: var(--stamp-red);
   cursor: pointer;
