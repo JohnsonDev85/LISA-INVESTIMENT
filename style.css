@@ -1,43 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
 
 :root {
-  --paper: #ede7d9;
-  --paper-deep: #e2dac4;
-  --ink: #23201b;
-  --ink-soft: #6b6252;
-  --line: #c7bca1;
-  --electronics: #146b73;
-  --electronics-soft: #e4eeee;
-  --realestate: #a6501f;
-  --realestate-soft: #f1e6dc;
-  --gold: #9c7a2e;
-  --gold-soft: #f0e9d3;
-  --stamp-red: #a63d2f;
-  --white: #fbf8f0;
-  --radius: 3px;
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-alt: #eef0f3;
+  --ink: #10151f;
+  --ink-soft: #5b6472;
+  --border: #e3e6eb;
 
-  --manager-color: var(--gold);
+  --brand: #3550e0;
+  --brand-soft: #eaeefd;
+  --electronics: #0d9c93;
+  --electronics-soft: #e2f5f3;
+  --realestate: #d9820b;
+  --realestate-soft: #fcefdb;
+  --danger: #e5484d;
+  --danger-soft: #fce9ea;
+  --success: #16a34a;
+
+  --manager-color: var(--brand);
   --sales-color: var(--electronics);
 
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Work Sans', -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --radius: 10px;
+  --radius-sm: 7px;
+  --shadow: 0 1px 2px rgba(16,21,31,0.04), 0 2px 6px rgba(16,21,31,0.05);
+  --shadow-md: 0 8px 24px rgba(16,21,31,0.10);
+
+  --font-display: 'Space Grotesk', -apple-system, sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      transparent,
-      transparent 27px,
-      rgba(35,32,27,0.045) 28px
-    ),
-    var(--paper);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
 .hidden { display: none !important; }
@@ -48,97 +49,138 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, #f4efe2 0%, #e4dcc4 100%);
+  background: var(--bg);
   padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+#loginScreen::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(13,156,147,0.20), transparent 42%),
+    radial-gradient(circle at 82% 18%, rgba(53,80,224,0.18), transparent 46%),
+    radial-gradient(circle at 50% 92%, rgba(217,130,11,0.18), transparent 46%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+#loginScreen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.35;
+  mask-image: radial-gradient(circle at center, black, transparent 75%);
+  -webkit-mask-image: radial-gradient(circle at center, black, transparent 75%);
+  pointer-events: none;
 }
 
 .login-card {
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-top: 4px solid var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 38px 32px 30px;
+  padding: 36px 32px 30px;
   width: 100%;
   max-width: 380px;
-  box-shadow: 0 10px 30px rgba(35,32,27,0.16);
+  box-shadow: var(--shadow-md);
   position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+.login-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--electronics), var(--brand), var(--realestate));
 }
 
+.brand { text-align: center; margin-top: 4px; }
 .brand h1 {
-  margin: 0;
+  margin: 6px 0 4px;
   font-family: var(--font-display);
-  font-optical-sizing: auto;
-  font-weight: 600;
-  font-size: 30px;
-  letter-spacing: 0.5px;
-  text-align: center;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.3px;
   color: var(--ink);
 }
 .brand p {
-  text-align: center;
-  margin: 6px 0 26px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
+  margin: 0 0 22px;
+  font-family: var(--font-body);
+  font-size: 13px;
   color: var(--ink-soft);
 }
-.brand p::before, .brand p::after { content: "\00b7 "; }
-.brand p::after { content: " \00b7"; }
+.brand::before {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--brand);
+}
 
 label {
   display: block;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin: 14px 0 5px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
   color: var(--ink-soft);
+  margin: 14px 0 6px;
 }
 input, select {
   width: 100%;
-  padding: 10px 11px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--white);
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   font-size: 14px;
   font-family: var(--font-body);
   color: var(--ink);
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-soft);
+}
 
 .btn-primary {
-  margin-top: 20px;
+  margin-top: 18px;
   width: 100%;
-  padding: 12px;
+  padding: 11px;
   border: none;
-  border-radius: var(--radius);
-  background: var(--ink);
-  color: var(--white);
-  font-family: var(--font-mono);
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  font-size: 13px;
+  border-radius: var(--radius-sm);
+  background: var(--brand);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
 }
-.btn-primary:hover { background: var(--gold); }
+.btn-primary:hover { background: #2a41ba; }
+.btn-primary:active { transform: scale(0.98); }
 
 .btn-outline {
-  padding: 9px 15px;
-  border: 1.5px solid var(--ink);
-  border-radius: var(--radius);
-  background: transparent;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
   color: var(--ink);
+  transition: border-color 0.15s, color 0.15s;
 }
-.btn-outline:hover { background: var(--ink); color: var(--white); }
+.btn-outline:hover { border-color: var(--brand); color: var(--brand); }
 
-.error-text { color: var(--stamp-red); font-family: var(--font-mono); font-size: 12px; margin-top: 12px; min-height: 16px; }
+.error-text { color: var(--danger); font-family: var(--font-body); font-size: 13px; margin-top: 12px; min-height: 16px; font-weight: 500; }
 
 /* ---------- APP SHELL ---------- */
 #appShell { min-height: 100vh; padding-bottom: 40px; }
@@ -148,142 +190,141 @@ input:focus, select:focus { outline: 2px solid var(--gold); outline-offset: 1px;
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background: var(--white);
-  border-bottom: 3px solid var(--ink);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+#appHeader::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--electronics), var(--brand), var(--realestate));
 }
 .header-left { display: flex; align-items: center; gap: 12px; }
 .header-left h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  font-size: 18px;
 }
 .badge {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 1px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
   padding: 4px 11px;
   border-radius: 20px;
-  color: var(--white);
-  background: var(--manager-color);
-  text-transform: uppercase;
+  color: var(--brand);
+  background: var(--brand-soft);
 }
-.badge.sales { background: var(--sales-color); }
-.header-right { display: flex; align-items: center; gap: 16px; font-size: 13px; font-family: var(--font-mono); }
+.badge.sales { background: var(--electronics-soft); color: var(--electronics); }
+.header-right { display: flex; align-items: center; gap: 16px; font-size: 13px; font-family: var(--font-body); font-weight: 500; }
 
-body.role-manager #appHeader { border-bottom-color: var(--gold); }
-body.role-salesperson #appHeader { border-bottom-color: var(--electronics); }
-
-/* ---------- TABS (folder tab concept) ---------- */
+/* ---------- TABS (segmented control) ---------- */
 .tabs {
   display: flex;
-  gap: 3px;
-  padding: 18px 24px 0;
+  gap: 4px;
+  padding: 5px;
+  margin: 20px 24px 0;
+  background: var(--surface-alt);
+  border-radius: 12px;
+  width: fit-content;
   flex-wrap: wrap;
 }
 .tab-btn {
-  padding: 10px 18px;
-  border: 1px solid var(--line);
-  border-bottom: none;
-  background: var(--paper-deep);
-  border-radius: 8px 8px 0 0;
+  padding: 8px 18px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
   cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  position: relative;
-  top: 2px;
-}
-.tab-btn:hover { color: var(--ink); top: 0; }
-.tab-btn.active {
-  background: var(--white);
-  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13.5px;
   font-weight: 600;
-  border-color: var(--line);
-  top: 0;
-  box-shadow: 0 -2px 0 var(--ink) inset;
+  color: var(--ink-soft);
+  transition: background 0.15s, color 0.15s;
 }
-.tab-btn[data-tab="electronicsTab"].active { box-shadow: 0 -3px 0 var(--electronics) inset; }
-.tab-btn[data-tab="realEstateTab"].active { box-shadow: 0 -3px 0 var(--realestate) inset; }
-.tab-btn[data-tab="summaryTab"].active { box-shadow: 0 -3px 0 var(--gold) inset; }
-.tab-btn[data-tab="expensesTab"].active { box-shadow: 0 -3px 0 var(--ink-soft) inset; }
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.tab-btn[data-tab="electronicsTab"].active { color: var(--electronics); }
+.tab-btn[data-tab="realEstateTab"].active { color: var(--realestate); }
+.tab-btn[data-tab="summaryTab"].active { color: var(--brand); }
+.tab-btn[data-tab="expensesTab"].active { color: var(--danger); }
 
 .tab-content {
   display: none;
-  padding: 22px 24px;
-  background: var(--white);
-  border-top: 1px solid var(--line);
+  padding: 20px 24px 4px;
 }
 .tab-content.active { display: block; }
 
 /* ---------- CARDS ---------- */
 .card {
-  background: var(--white);
-  border: 1px solid var(--line);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 20px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
 }
 .card h3 {
   margin: 0 0 16px;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 17px;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 10px;
+  font-size: 16px;
+  color: var(--ink);
 }
-.card-header-row { display: flex; justify-content: space-between; align-items: center; }
-.card-header-row h3 { border-bottom: none; margin: 0; }
-.hint-text { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); margin-bottom: 12px; }
+.card-header-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.card-header-row h3 { margin: 0; }
+.hint-text { font-family: var(--font-body); font-size: 12px; color: var(--ink-soft); margin-bottom: 12px; }
 
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 18px; }
-.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 16px; }
 @media (max-width: 800px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
-/* Division accents by tab context */
-#electronicsTab .card h3 { border-bottom-color: var(--electronics); }
-#realEstateTab .card h3 { border-bottom-color: var(--realestate); }
+/* Division accents by tab context - left border on cards */
+#electronicsTab .card { border-left: 3px solid var(--electronics); }
+#realEstateTab .card { border-left: 3px solid var(--realestate); }
 
-/* ---------- TABLES (ledger rows) ---------- */
+/* ---------- TABLES ---------- */
 .table-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--font-mono); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-family: var(--font-body); }
 th, td {
-  padding: 10px 9px;
-  border-bottom: 1px solid var(--line);
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--border);
   text-align: left;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 th {
   color: var(--ink-soft);
-  font-weight: 500;
-  font-size: 10px;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  background: var(--paper-deep);
-}
-tr:hover td { background: var(--gold-soft); }
-
-.date-group-row td {
-  background: var(--paper-deep);
-  font-family: var(--font-mono);
   font-weight: 600;
   font-size: 11px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  background: var(--surface-alt);
+}
+tr:hover td { background: var(--surface-alt); }
+
+.date-group-row td {
+  background: var(--surface-alt);
+  font-weight: 600;
+  font-size: 12px;
   color: var(--ink);
 }
 .date-total-row td {
-  background: var(--gold-soft);
-  font-family: var(--font-mono);
-  font-weight: 600;
-  color: var(--gold);
-  border-bottom: 2px solid var(--line);
+  background: var(--brand-soft);
+  font-weight: 700;
+  color: var(--brand);
+  border-bottom: 2px solid var(--border);
 }
 
-/* right-align money columns per table */
+/* right-align money columns per table (header matches data) */
 #productsTable th:nth-child(2), #productsTable td:nth-child(2),
 #productsTable th:nth-child(3), #productsTable td:nth-child(3) { text-align: right; }
 
@@ -308,19 +349,21 @@ tr:hover td { background: var(--gold-soft); }
 
 #remittancesTable th:nth-child(3), #remittancesTable td:nth-child(3) { text-align: right; }
 
-/* Fix column alignment on wide screens (laptop) - bila hii, mistari yenye
-   colspan (kichwa cha siku, jumla ya siku) hupanga columns tofauti na
-   mistari ya kawaida kwenye screen pana */
-/* Kumbuka: hatuhitaji table-layout:fixed kwa mySalesTable - mistari ya kawaida
-   (yenye columns 5) tayari inaamua upana wa kila column; mistari ya colspan
-   (kichwa cha siku, jumla ya siku) yanafuata hiyo grid moja kwa moja. */
+.link-btn {
+  color: var(--danger);
+  cursor: pointer;
+  background: var(--danger-soft);
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.link-btn:hover { background: var(--danger); color: #fff; }
 
-/* ---------- MOBILE CARD VIEW kwa Recent Sales (mySalesTable) ----------
-   Kwenye simu, badala ya kujaribu kulazimisha table iendelee kupangika
-   kama columns (jambo linaloleta matatizo daima), tunaibadilisha kuwa
-   "cards" - kila mauzo linaonekana kama kadi yenye majina ya fields wazi.
-   Hii ni njia ya uhakika ya "responsive tables" isiyohitaji fixed width
-   wala horizontal scroll. */
+/* ---------- MOBILE CARD VIEW kwa Recent Sales (mySalesTable) ---------- */
 @media (max-width: 700px) {
   #mySalesTable thead { display: none; }
   #mySalesTable, #mySalesTable tbody, #mySalesTable tr, #mySalesTable td {
@@ -329,98 +372,87 @@ tr:hover td { background: var(--gold-soft); }
   }
   #mySalesTable tbody tr:not(.date-group-row):not(.date-total-row) {
     margin-bottom: 12px;
-    border: 1px solid var(--line);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    background: var(--white);
+    background: var(--surface);
+    box-shadow: var(--shadow);
   }
   #mySalesTable tbody tr:not(.date-group-row):not(.date-total-row) td {
     display: flex;
     justify-content: space-between;
     align-items: center;
     text-align: right;
-    padding: 9px 12px;
+    padding: 10px 14px;
     white-space: normal;
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--border);
   }
   #mySalesTable tbody tr:not(.date-group-row):not(.date-total-row) td:last-child {
     border-bottom: none;
   }
   #mySalesTable tbody tr:not(.date-group-row):not(.date-total-row) td::before {
     content: attr(data-label);
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.5px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
     color: var(--ink-soft);
     text-align: left;
     padding-right: 10px;
   }
 
-  /* Kichwa cha siku - onesha tarehe tu, ficha zile cells tupu */
   #mySalesTable .date-group-row td:not(:first-child) { display: none; }
   #mySalesTable .date-group-row td:first-child {
     text-align: left;
-    padding: 10px 12px;
+    padding: 10px 14px;
     margin-top: 6px;
+    border-radius: 8px;
   }
 
-  /* Jumla ya siku - onesha jina la field na kiasi tu, ficha zile tupu */
   #mySalesTable .date-total-row td:nth-child(2),
   #mySalesTable .date-total-row td:nth-child(4),
   #mySalesTable .date-total-row td:nth-child(5) { display: none; }
   #mySalesTable .date-total-row td:first-child {
     display: inline-flex;
     width: auto;
-    padding: 10px 6px 10px 12px;
+    padding: 10px 6px 10px 14px;
+    border-radius: 8px 0 0 8px;
   }
   #mySalesTable .date-total-row td:nth-child(3) {
     display: inline-flex;
     width: auto;
-    padding: 10px 12px 10px 6px;
+    padding: 10px 14px 10px 6px;
+    border-radius: 0 8px 8px 0;
   }
 }
 
-.link-btn {
-  color: var(--stamp-red);
-  cursor: pointer;
-  background: none;
-  border: 1px solid var(--stamp-red);
-  border-radius: 3px;
-  padding: 2px 8px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-.link-btn:hover { background: var(--stamp-red); color: var(--white); }
-
 /* ---------- SUMMARY ---------- */
-.period-selector { display: flex; gap: 8px; margin-bottom: 12px; }
+.period-selector { display: flex; gap: 4px; margin-bottom: 12px; background: var(--surface-alt); padding: 5px; border-radius: 10px; width: fit-content; }
 .period-btn {
   padding: 7px 16px;
-  border: 1.5px solid var(--gold);
+  border: none;
   background: transparent;
-  color: var(--gold);
-  border-radius: 20px;
+  color: var(--ink-soft);
+  border-radius: 7px;
   cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
 }
-.period-btn.active { background: var(--gold); color: var(--white); }
-.period-label { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); margin: 0; }
+.period-btn.active { background: var(--surface); color: var(--brand); box-shadow: var(--shadow); }
+.period-label { font-family: var(--font-body); font-size: 12.5px; color: var(--ink-soft); margin: 0; }
 
 .stat-card {
-  background: var(--white);
-  border: 1px solid var(--line);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-left: 4px solid var(--ink-soft);
   border-radius: var(--radius);
   padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  box-shadow: var(--shadow);
 }
 .grid-3 .stat-card:nth-child(1) { border-left-color: var(--electronics); }
 .grid-3 .stat-card:nth-child(2) { border-left-color: var(--realestate); }
@@ -429,51 +461,54 @@ tr:hover td { background: var(--gold-soft); }
 .grid-4 .stat-card:nth-child(1) { border-left-color: var(--electronics); }
 .grid-4 .stat-card:nth-child(2) { border-left-color: var(--realestate); }
 .grid-4 .stat-card:nth-child(3) { border-left-color: var(--realestate); }
-.grid-4 .stat-card:nth-child(4) { border-left-color: var(--gold); }
+.grid-4 .stat-card:nth-child(4) { border-left-color: var(--realestate); }
 .grid-4 .stat-card:nth-child(5) { border-left-color: var(--electronics); }
 
 .expense-line { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-.expense-line .stat-value { color: var(--stamp-red); }
+.expense-line .stat-value { color: var(--danger); }
 
 .status-badge {
   display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  padding: 3px 10px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 4px 11px;
   border-radius: 20px;
 }
 .status-pending { background: var(--realestate-soft); color: var(--realestate); }
 .status-approved { background: var(--electronics-soft); color: var(--electronics); }
 
-.stat-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-soft); }
-.stat-value { font-family: var(--font-mono); font-size: 24px; font-weight: 600; color: var(--ink); }
+.stat-label { font-family: var(--font-body); font-size: 11.5px; font-weight: 600; color: var(--ink-soft); }
+.stat-value { font-family: var(--font-mono); font-size: 23px; font-weight: 600; color: var(--ink); }
 .total-card {
   display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
-  background: var(--gold-soft);
+  background: var(--brand);
   border: none;
-  border-top: 3px double var(--ink);
-  border-bottom: 3px double var(--ink);
-  border-radius: 0;
-  padding: 22px 20px;
+  border-radius: var(--radius);
+  padding: 22px 22px;
+  box-shadow: var(--shadow-md);
 }
-.stat-value-big { font-family: var(--font-mono); font-size: 32px; font-weight: 600; color: var(--gold); }
+.total-card .stat-label { color: rgba(255,255,255,0.75); }
+.stat-value-big { font-family: var(--font-mono); font-size: 30px; font-weight: 700; color: #ffffff; }
 
 /* ---------- TOAST ---------- */
 .toast {
   position: fixed;
   bottom: 20px;
   right: 20px;
+  left: 20px;
+  max-width: 380px;
+  margin-left: auto;
   background: var(--ink);
-  color: var(--white);
-  padding: 13px 20px;
-  border-radius: var(--radius);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  color: #ffffff;
+  padding: 13px 18px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
   z-index: 999;
-  border-left: 4px solid var(--gold);
 }
-.toast.error { background: var(--stamp-red); border-left-color: #5c1f18; }
-.toast.success { background: var(--electronics); border-left-color: #0a3d42; }
+.toast.error { background: var(--danger); }
+.toast.success { background: var(--success); }
