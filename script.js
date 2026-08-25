@@ -771,17 +771,25 @@ async function deleteSale(id) {
   if (!confirm("Una uhakika unataka kufuta mauzo haya? Stock ya bidhaa itarudishwa.")) return;
   const row = document.getElementById("sale-row-" + id);
   if (row) row.remove();
-  showToast("Mauzo yamefutwa, stock imerudishwa.", "success");
   try {
     const saleDoc = await db.collection("ngole_sales").doc(id).get();
     if (!saleDoc.exists) return;
     const s = saleDoc.data();
+    const productRef = db.collection("ngole_products").doc(s.productId);
+    const productSnap = await productRef.get();
     const batch = db.batch();
     batch.delete(db.collection("ngole_sales").doc(id));
-    batch.update(db.collection("ngole_products").doc(s.productId), {
-      stockQty: firebase.firestore.FieldValue.increment(s.qty)
-    });
+    if (productSnap.exists) {
+      batch.update(productRef, {
+        stockQty: firebase.firestore.FieldValue.increment(s.qty)
+      });
+    }
     await batch.commit();
+    if (productSnap.exists) {
+      showToast("Mauzo yamefutwa, stock imerudishwa.", "success");
+    } else {
+      showToast("Mauzo yamefutwa. Bidhaa hii haipo tena, stock haikurudishwa.", "success");
+    }
   } catch (err) {
     showToast("Hitilafu kufuta: " + err.message, "error");
   }
