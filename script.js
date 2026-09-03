@@ -20,7 +20,7 @@ const RATES = {
   chumbaself_sebule: 60000,
   chumbaself_sebule_jiko: 100000,
   frame_biashara: 50000,
-  complete_house: 150000
+  complete_house: 200000
 };
 const HOUSE_LABELS = {
   single_room: "Single Room",
